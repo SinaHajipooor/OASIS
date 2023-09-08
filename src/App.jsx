@@ -1,23 +1,16 @@
-import { styled } from "styled-components"
 import GlobalStyles from "./styles/GlobalStyles";
 import Button from "./ui/Button";
 import Input from "./ui/Input";
-
-
-const H1 = styled.h1`
-font-size : 50px;
-font-weight:600;
-`;
-
+import Heading from "./ui/Heading";
 
 
 function App() {
     return (
         <>
             <GlobalStyles />
-            <H1>
+            <Heading>
                 test styled components
-            </H1>
+            </Heading>
             <Button>Check In</Button>
             <Input></Input>
         </>
