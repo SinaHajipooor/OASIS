@@ -8,9 +8,9 @@ function App() {
     return (
         <>
             <GlobalStyles />
-            <Heading>
-                test styled components
-            </Heading>
+            <Heading as='h1'>test styled components</Heading>
+            <Heading as='h2'>test styled components</Heading>
+            <Heading as='h3'>test styled components</Heading>
             <Button>Check In</Button>
             <Input></Input>
         </>
