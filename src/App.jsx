@@ -21,8 +21,8 @@ function App() {
                         <Heading as='h1'>The Wild Oasis</Heading>
                         <div>
                             <Heading as='h2'>Check in and out</Heading>
-                            <Button>Check In</Button>
-                            <Button>Check out</Button>
+                            <Button variation='primary' size='medium'>Check In</Button>
+                            <Button variation='secondary' size='small'>Check out</Button>
                         </div>
                     </Row>
                     <Row type='vertical'>
