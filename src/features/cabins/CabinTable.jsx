@@ -1,8 +1,7 @@
-import { useQuery } from "@tanstack/react-query";
 import styled from "styled-components";
-import { getCabins } from "../../services/apiCabins";
 import Spinner from '../../ui/Spinner'
 import CabinRow from "./CabinRow";
+import { useCabins } from "./useCabins";
 
 
 
@@ -32,12 +31,8 @@ const TableHeader = styled.header`
 
 
 function CabinTable() {
-    // states
-    const { isLoading, data: cabins } = useQuery({
-        queryKey: ['cabins'],
-        // queryFn is a function that make the query to the api and also this function should return a promise 
-        queryFn: getCabins
-    })
+    // get the data by the sutom hook 
+    const { isLoading, cabins } = useCabins()
     // ui
     if (isLoading) return <Spinner />
 
