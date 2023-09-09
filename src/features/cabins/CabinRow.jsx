@@ -1,5 +1,8 @@
 import styled from "styled-components";
 import { formatCurrency } from '../../utils/helpers'
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { deleteCabin } from "../../services/apiCabins";
+import Spinner from "../../ui/Spinner";
 
 
 
@@ -12,8 +15,7 @@ const TableRow = styled.div`
 
   &:not(:last-child) {
     border-bottom: 1px solid var(--color-grey-100);
-  }
-`;
+}`;
 
 const Img = styled.img`
   display: block;
@@ -43,9 +45,26 @@ const Discount = styled.div`
 `;
 
 function CabinRow({ cabin }) {
+    // to get the query clien 
+    const queryClient = useQueryClient()
     // destructure all the data that we want from cabin obj
-    const { name, maxCapacity, regularPrice, discount, image } = cabin;
+    const { id: cabinId, name, maxCapacity, regularPrice, discount, image } = cabin;
+    // get the loading status and also the mutate function from react query
+    const { isLoading, mutate } = useMutation({
+
+
+        mutationFn: (id) => deleteCabin(id),
+        // this method will run just after the mutate function has been implemented
+        onSuccess: () => {
+
+            queryClient.invalidateQueries({
+                queryKey: ['cabins']
+            })
+        },
+        onError: err => alert(err.message)
+    });
     //ui
+    if (isLoading) return <Spinner />
     return (
         <TableRow role='row'>
             <Img src={image} />
@@ -53,7 +72,7 @@ function CabinRow({ cabin }) {
             <div>Fits up to {maxCapacity} guests</div>
             <Price>{formatCurrency(regularPrice)}</Price>
             <Discount>{formatCurrency(discount)}</Discount>
-            <button>Delete</button>
+            <button onClick={() => mutate(cabinId)} disabled={isLoading}>Delete</button>
         </TableRow>
     )
 }
