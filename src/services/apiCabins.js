@@ -26,13 +26,19 @@ export async function deleteCabin(id) {
 }
 
 
-// create new cabin
-export async function createCabin(newCabin) {
-    // create image url 
-    const imageName = `${Math.random()}-${newCabin.image.name}`.replaceAll('/', '');
+// create new cabin or edit an exsisting cabin
+export async function createOrEditCabin(newCabin, id) {
+    // to find out if the user has changed the image or not 
+    const hasImagePath = newCabin.image?.startsWith?.(supabaseUrl);
+    // create image url (first check if the user has changed the image or not , we dont want to upload image twice)
+    const imageName = hasImagePath ? newCabin.image : `${Math.random()}-${newCabin.image.name}`.replaceAll('/', '');
     const imagePath = `${supabaseUrl}/storage/v1/object/public/cabin-images/${imageName}`
-    // create cabin
-    const { data, error } = await supabase.from('cabins').insert([{ ...newCabin, image: imagePath }]);
+    let query = supabase.from('cabins')
+    // create cabin ( if there was an id in function parameters , it means that we are editing cabin so we dont want to create new one)
+    if (!id) query = query.insert([{ ...newCabin, image: imagePath }]);
+    // edit
+    if (id) query = query.update({ ...newCabin, image: imagePath }).eq('id', id)
+    const { data, error } = await query.select().single();
     // eror handling while the cabin is creating (without uploading file)
     if (error) {
         console.log(error.message);
