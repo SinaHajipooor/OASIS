@@ -45,26 +45,23 @@ const Discount = styled.div`
 `;
 
 function CabinRow({ cabin }) {
-    // to get the query clien 
+    // to get the query client
     const queryClient = useQueryClient()
     // destructure all the data that we want from cabin obj
     const { id: cabinId, name, maxCapacity, regularPrice, discount, image } = cabin;
     // get the loading status and also the mutate function from react query
     const { isLoading, mutate } = useMutation({
-
-
         mutationFn: (id) => deleteCabin(id),
         // this method will run just after the mutate function has been implemented
         onSuccess: () => {
-
+            // by invalidating the cache data we force the ui to refresh after we have deleting 
             queryClient.invalidateQueries({
                 queryKey: ['cabins']
             })
         },
         onError: err => alert(err.message)
     });
-    //ui
-    if (isLoading) return <Spinner />
+    //ui 
     return (
         <TableRow role='row'>
             <Img src={image} />
