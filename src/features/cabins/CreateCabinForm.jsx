@@ -36,7 +36,7 @@ function CreateCabinForm() {
     // submite handler 
     function submitHnadler(data) {
         // use the mutate function to mutate the remote state and this method is connected to our createCabin method that we wrote in apiCabins file and we need to pass the new cabin object to it
-        mutate(data)
+        mutate({ ...data, image: data.image[0] })
     }
     // we passed a validator object into our form elements and when ever one of the form elements wasnt valid , then this method will execute (onError function that we pass into the handleSubmit ) , this method automatically recive the errors that we got
     function onError(errors) {
@@ -74,7 +74,7 @@ function CreateCabinForm() {
                 <Input type="number" id="discount" defaultValue={0} {...register('discount', {
                     required: 'This field is required',
                     // this custom validator function get the current value of the element automatically
-                    validate: (value) => value <= getValues().regularPrice || 'Discount should be less than the regular price '
+                    //     validate: (value) => value > getValues().regularPrice
                 })} />
             </FormRow>
 
@@ -84,7 +84,7 @@ function CreateCabinForm() {
                 })} />
             </FormRow>
             <FormRow lable='cabin photo'>
-                <FileInput id="image" accept="image/*" />
+                <FileInput id="image" accept="image/*"  {...register('image', { required: 'This is a required field' })} />
             </FormRow>
 
             <FormRow>
@@ -95,6 +95,7 @@ function CreateCabinForm() {
                 <Button disabled={isLaoding}>Add cabin</Button>
             </FormRow>
         </Form>
+
     );
 }
 
