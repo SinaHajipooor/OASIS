@@ -17,8 +17,8 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 const queryClient = new QueryClient({
     defaultOptions: {
         queries: {
-            // staleTime is the time that the data in the cache will stay fresh
-            staleTime: 60 * 1000
+            // staleTime is the time that the data in the cache will stay fresh (when we define 0 as the staleTime , then the data will always be fresh and whenever something change in our database , we will see the change in client immidietly )
+            staleTime: 0
         }
     }
 })
