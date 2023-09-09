@@ -2,6 +2,7 @@ import styled from "styled-components";
 import { formatCurrency } from '../../utils/helpers'
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { deleteCabin } from "../../services/apiCabins";
+import toast from "react-hot-toast";
 
 
 
@@ -53,12 +54,13 @@ function CabinRow({ cabin }) {
         mutationFn: (id) => deleteCabin(id),
         // this method will run just after the mutate function has been implemented
         onSuccess: () => {
+            toast.success('Cabin successfully deleted')
             // by invalidating the cache data we force the ui to refresh after we have deleting 
             queryClient.invalidateQueries({
                 queryKey: ['cabins']
             })
         },
-        onError: err => alert(err.message)
+        onError: err => toast.error(err.message)
     });
     //ui 
     return (
