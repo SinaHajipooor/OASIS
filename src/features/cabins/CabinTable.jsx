@@ -33,7 +33,7 @@ const TableHeader = styled.header`
 
 function CabinTable() {
     // states
-    const { isLoading, data: cabins, error } = useQuery({
+    const { isLoading, data: cabins } = useQuery({
         queryKey: ['cabin'],
         // queryFn is a function that make the query to the api and also this function should return a promise 
         queryFn: getCabins
