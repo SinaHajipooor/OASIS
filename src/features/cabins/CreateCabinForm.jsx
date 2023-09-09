@@ -6,6 +6,9 @@ import Button from "../../ui/Button";
 import FileInput from "../../ui/FileInput";
 import Textarea from "../../ui/Textarea";
 import { useForm } from "react-hook-form";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { createCabin } from "../../services/apiCabins";
+import toast from "react-hot-toast";
 
 const FormRow = styled.div`
   display: grid;
@@ -45,10 +48,28 @@ const Label = styled.label`
 
 function CreateCabinForm() {
     // control form 
-    const { register, handleSubmit } = useForm()
+    const { register, handleSubmit, reset } = useForm()
+    // get query client to invalidate data after we add new cabin , to refetch all the cabins after that 
+    const queryClient = useQueryClient()
+    // get the mutation because here we want to add new cabin
+    const { isLaoding, mutate } = useMutation({
+        mutationFn: createCabin,
+        onSuccess: () => {
+            toast.success('New Cabin successfully created')
+            queryClient.invalidateQueries({
+                queryKey: ['cabins']
+            });
+            // reset the form 
+            reset();
+        },
+        onError: () => {
+            toast.error('Couldnt create new cabin')
+        }
+    });
     // submite handler 
     function submitHnadler(data) {
-        console.log(data)
+        // use the mutate function to mutate the remote state and this method is connected to our createCabin method that we wrote in apiCabins file and we need to pass the new cabin object to it
+        mutate(data)
     }
     // ui 
     return (
@@ -88,7 +109,7 @@ function CreateCabinForm() {
                 <Button variation="secondary" type="reset">
                     Cancel
                 </Button>
-                <Button>Add cabin</Button>
+                <Button disabled={isLaoding}>Add cabin</Button>
             </FormRow>
         </Form>
     );

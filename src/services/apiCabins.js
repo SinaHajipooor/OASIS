@@ -24,3 +24,14 @@ export async function deleteCabin(id) {
 
     return data;
 }
+
+
+// create new cabin
+export async function createCabin(newCabin) {
+    const { data, error } = await supabase.from('cabins').insert([newCabin]);
+    if (error) {
+        console.log(error.message);
+        throw new Error('Failed to create new cabin');
+    }
+    return data;
+}
