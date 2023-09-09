@@ -8,6 +8,8 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createOrEditCabin } from "../../services/apiCabins";
 import toast from "react-hot-toast";
 import FormRow from "../../ui/FormRow";
+import { useCreateCabin } from "./useCreateCabin";
+import { useEditCabin } from "./useEditCabin";
 
 
 
@@ -20,52 +22,29 @@ function CreateCabinForm({ cabinToEdit = {} }) {
     const { register, handleSubmit, reset, getValues, formState } = useForm({ defaultValues: isEditSession ? editValues : {} });
     // get the forms error from  formState 
     const { errors } = formState;
-    // get query client to invalidate data after we add new cabin , to refetch all the cabins after that 
-    const queryClient = useQueryClient()
-    // get the mutation because here we want to add new cabin
-    const { isLaoding, mutate: createCabin } = useMutation({
-        mutationFn: createOrEditCabin,
-        onSuccess: () => {
-            toast.success('New Cabin successfully created')
-            queryClient.invalidateQueries({
-                queryKey: ['cabins']
-            });
-            // reset the form  
-            reset();
-        },
-        onError: () => {
-            toast.error('Couldnt create new cabin')
-        }
-    });
-    // get the mutation because here we want to edit cabin
-    const { isLaoding: isEditing, mutate: editCabin } = useMutation({
-        mutationFn: ({ newCabinData, id }) => createOrEditCabin(newCabinData, id),
-        onSuccess: () => {
-            toast.success('Cabin successfully edited')
-            queryClient.invalidateQueries({
-                queryKey: ['cabins']
-            });
-            // reset the form  
-            reset();
-        },
-        onError: () => {
-            toast.error('Couldnt create new cabin')
-        }
-    });
+    // get the create hook
+    const { isCreating, createCabin } = useCreateCabin();
+    // get the edit hook 
+    const { isEditing, editCabin } = useEditCabin();
     // submite handler 
     function submitHnadler(data) {
         // to find out what image we are passing (file or path)
         const image = typeof data.image === 'string' ? data.image : data.image[0];
-        if (isEditSession) editCabin({ newCabinData: { ...data, image }, id: editId });
+        if (isEditSession) editCabin({ newCabinData: { ...data, image }, id: editId }, {
+            onSuccess: () => reset()
+        });
         // use the mutate function to mutate the remote state and this method is connected to our createCabin method that we wrote in apiCabins file and we need to pass the new cabin object to it
-        else createCabin({ ...data, image: image })
+        // we can also access the onSuccess function here when we mutate state by passing an object as a second parameter
+        else createCabin({ ...data, image: image }, {
+            onSuccess: () => reset()
+        })
     }
     // we passed a validator object into our form elements and when ever one of the form elements wasnt valid , then this method will execute (onError function that we pass into the handleSubmit ) , this method automatically recive the errors that we got
     function onError(errors) {
         console.log(errors)
     }
     // ui 
-    const isWorking = isLaoding || isEditing;
+    const isWorking = isCreating || isEditing;
     return (
         <Form onSubmit={handleSubmit(submitHnadler, onError)}>
             <FormRow lable='Cabin name' error={errors?.name?.message}>
