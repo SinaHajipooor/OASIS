@@ -11,9 +11,13 @@ import FormRow from "../../ui/FormRow";
 
 
 
-function CreateCabinForm() {
+function CreateCabinForm({ cabinToEdit = {} }) {
+    // get the default values that we pass when the user open the form to edit
+    const { id: editId, ...editValues } = cabinToEdit;
+    // to find out if we are using the form to edit or to create
+    const isEditSession = Boolean(editId);
     // control form  ( getValues gives us the value of the form elements)
-    const { register, handleSubmit, reset, getValues, formState } = useForm();
+    const { register, handleSubmit, reset, getValues, formState } = useForm({ defaultValues: isEditSession ? editValues : {} });
     // get the forms error from  formState 
     const { errors } = formState;
     // get query client to invalidate data after we add new cabin , to refetch all the cabins after that 
@@ -84,7 +88,7 @@ function CreateCabinForm() {
                 })} />
             </FormRow>
             <FormRow lable='cabin photo'>
-                <FileInput id="image" accept="image/*"  {...register('image', { required: 'This is a required field' })} />
+                <FileInput id="image" accept="image/*"  {...register('image', { required: isEditSession ? false : 'This is a required field' })} />
             </FormRow>
 
             <FormRow>
@@ -92,7 +96,7 @@ function CreateCabinForm() {
                 <Button variation="secondary" type="reset">
                     Cancel
                 </Button>
-                <Button disabled={isLaoding}>Add cabin</Button>
+                <Button disabled={isLaoding}>{isEditSession ? 'Edit Cabin' : 'Create new Cabin'}</Button>
             </FormRow>
         </Form>
 
