@@ -10,6 +10,8 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createCabin } from "../../services/apiCabins";
 import toast from "react-hot-toast";
 
+
+
 const FormRow = styled.div`
   display: grid;
   align-items: center;
@@ -41,14 +43,16 @@ const Label = styled.label`
   font-weight: 500;
 `;
 
-// const Error = styled.span`
-//   font-size: 1.4rem;
-//   color: var(--color-red-700);
-// `;
+const Error = styled.span`
+  font-size: 1.4rem;
+  color: var(--color-red-700);
+`;
 
 function CreateCabinForm() {
-    // control form 
-    const { register, handleSubmit, reset } = useForm()
+    // control form  ( getValues gives us the value of the form elements)
+    const { register, handleSubmit, reset, getValues, formState } = useForm();
+    // get the forms error from  formState 
+    const { errors } = formState;
     // get query client to invalidate data after we add new cabin , to refetch all the cabins after that 
     const queryClient = useQueryClient()
     // get the mutation because here we want to add new cabin
@@ -59,7 +63,7 @@ function CreateCabinForm() {
             queryClient.invalidateQueries({
                 queryKey: ['cabins']
             });
-            // reset the form 
+            // reset the form  
             reset();
         },
         onError: () => {
@@ -71,32 +75,58 @@ function CreateCabinForm() {
         // use the mutate function to mutate the remote state and this method is connected to our createCabin method that we wrote in apiCabins file and we need to pass the new cabin object to it
         mutate(data)
     }
+    // we passed a validator object into our form elements and when ever one of the form elements wasnt valid , then this method will execute (onError function that we pass into the handleSubmit ) , this method automatically recive the errors that we got
+    function onError(errors) {
+        console.log(errors)
+    }
     // ui 
     return (
-        <Form onSubmit={handleSubmit(submitHnadler)}>
+        <Form onSubmit={handleSubmit(submitHnadler, onError)}>
             <FormRow>
                 <Label htmlFor="name">Cabin name</Label>
-                <Input type="text" id="name"  {...register('name')} />
+                <Input type="text" id="name"  {...register('name', {
+                    required: 'This field is required'
+                })} />
+                {/* display the error component if this field has any error in our form  */}
+                {errors?.name?.message && <Error>{errors.name.message}</Error>}
             </FormRow>
 
             <FormRow>
                 <Label htmlFor="maxCapacity">Maximum capacity</Label>
-                <Input type="number" id="maxCapacity" {...register('maxCapacity')} />
+                <Input type="number" id="maxCapacity" {...register('maxCapacity', {
+                    required: 'This field is required',
+                    min: {
+                        value: 1,
+                        message: 'Capacity should be at least 1'
+                    }
+                })} />
             </FormRow>
 
             <FormRow>
                 <Label htmlFor="regularPrice">Regular price</Label>
-                <Input type="number" id="regularPrice" {...register('regularPrice')} />
+                <Input type="number" id="regularPrice" {...register('regularPrice', {
+                    required: 'This field is required',
+                    min: {
+                        value: 1,
+                        message: 'price should be at least 1'
+                    }
+                })} />
             </FormRow>
 
             <FormRow>
                 <Label htmlFor="discount">Discount</Label>
-                <Input type="number" id="discount" defaultValue={0} {...register('discount')} />
+                <Input type="number" id="discount" defaultValue={0} {...register('discount', {
+                    required: 'This field is required',
+                    // this custom validator function get the current value of the element automatically
+                    validate: (value) => value <= getValues().regularPrice || 'Discount should be less than the regular price '
+                })} />
             </FormRow>
 
             <FormRow>
                 <Label htmlFor="description">Description for website</Label>
-                <Textarea type="number" id="description" defaultValue=""  {...register('description')} />
+                <Textarea type="number" id="description" defaultValue=""  {...register('description', {
+                    required: 'This field is required'
+                })} />
             </FormRow>
 
             <FormRow>
