@@ -4,9 +4,6 @@ import Button from "../../ui/Button";
 import FileInput from "../../ui/FileInput";
 import Textarea from "../../ui/Textarea";
 import { useForm } from "react-hook-form";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { createOrEditCabin } from "../../services/apiCabins";
-import toast from "react-hot-toast";
 import FormRow from "../../ui/FormRow";
 import { useCreateCabin } from "./useCreateCabin";
 import { useEditCabin } from "./useEditCabin";
@@ -19,7 +16,7 @@ function CreateCabinForm({ cabinToEdit = {} }) {
     // to find out if we are using the form to edit or to create
     const isEditSession = Boolean(editId);
     // control form  ( getValues gives us the value of the form elements)
-    const { register, handleSubmit, reset, getValues, formState } = useForm({ defaultValues: isEditSession ? editValues : {} });
+    const { register, handleSubmit, reset, formState } = useForm({ defaultValues: isEditSession ? editValues : {} });
     // get the forms error from  formState 
     const { errors } = formState;
     // get the create hook
