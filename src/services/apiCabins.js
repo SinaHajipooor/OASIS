@@ -16,12 +16,10 @@ export async function getCabins() {
 // delete cabin
 export async function deleteCabin(id) {
     const { data, error } = await supabase.from('cabins').delete().eq('id', id);
-
     if (error) {
         console.log(error);
         throw new Error('failed to delete cabin')
     }
-
     return data;
 }
 
@@ -45,6 +43,8 @@ export async function createOrEditCabin(newCabin, id) {
         throw new Error('Failed to create new cabin');
     }
     // upload image  
+    // if there is an image we dont want to upload anything else
+    if (hasImagePath) return data;
     const { error: storageError } = await supabase.storage.from('cabin-images').upload(imageName, newCabin.image);
 
     // delete cabin if there was an error while uploading image  
