@@ -1,6 +1,5 @@
 import supabase, { supabaseUrl } from "./supabase"
 
-
 // to get cabins 
 export async function getCabins() {
     const { data, error } = await supabase.from('cabins').select('*');
@@ -12,7 +11,6 @@ export async function getCabins() {
     return data;
 }
 
-
 // delete cabin
 export async function deleteCabin(id) {
     const { data, error } = await supabase.from('cabins').delete().eq('id', id);
@@ -22,7 +20,6 @@ export async function deleteCabin(id) {
     }
     return data;
 }
-
 
 // create new cabin or edit an exsisting cabin
 export async function createOrEditCabin(newCabin, id) {
@@ -46,13 +43,11 @@ export async function createOrEditCabin(newCabin, id) {
     // if there is an image we dont want to upload anything else
     if (hasImagePath) return data;
     const { error: storageError } = await supabase.storage.from('cabin-images').upload(imageName, newCabin.image);
-
     // delete cabin if there was an error while uploading image  
     if (storageError) {
         await supabase.from('cabins').delete().eq('id', data.id);
         console.error(storageError);
         throw new Error('Failed to create cabin (couldnt upload the image)')
     }
-
     return data;
 }
