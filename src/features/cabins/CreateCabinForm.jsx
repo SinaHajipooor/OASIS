@@ -49,7 +49,7 @@ function CreateCabinForm({ cabinToEdit = {}, onCloseModal }) {
     // ui 
     const isWorking = isCreating || isEditing;
     return (
-        <Form onSubmit={handleSubmit(submitHnadler, onError)}>
+        <Form onSubmit={handleSubmit(submitHnadler, onError)} type={onCloseModal ? 'modal' : 'regular'}>
             <FormRow lable='Cabin name' error={errors?.name?.message}>
                 <Input type="text" id="name"  {...register('name', {
                     required: 'This field is required'
