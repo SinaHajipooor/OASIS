@@ -10,7 +10,7 @@ import { useEditCabin } from "./useEditCabin";
 
 
 
-function CreateCabinForm({ cabinToEdit = {} }) {
+function CreateCabinForm({ cabinToEdit = {}, onCloseModal }) {
     // get the default values that we pass when the user open the form to edit
     const { id: editId, ...editValues } = cabinToEdit;
     // to find out if we are using the form to edit or to create
@@ -28,12 +28,18 @@ function CreateCabinForm({ cabinToEdit = {} }) {
         // to find out what image we are passing (file or path)
         const image = typeof data.image === 'string' ? data.image : data.image[0];
         if (isEditSession) editCabin({ newCabinData: { ...data, image }, id: editId }, {
-            onSuccess: () => reset()
+            onSuccess: (data) => {
+                reset();
+                onCloseModal?.();
+            }
         });
         // use the mutate function to mutate the remote state and this method is connected to our createCabin method that we wrote in apiCabins file and we need to pass the new cabin object to it
         // we can also access the onSuccess function here when we mutate state by passing an object as a second parameter
         else createCabin({ ...data, image: image }, {
-            onSuccess: () => reset()
+            onSuccess: (data) => {
+                reset();
+                onCloseModal?.();
+            }
         })
     }
     // we passed a validator object into our form elements and when ever one of the form elements wasnt valid , then this method will execute (onError function that we pass into the handleSubmit ) , this method automatically recive the errors that we got
@@ -88,7 +94,7 @@ function CreateCabinForm({ cabinToEdit = {} }) {
 
             <FormRow>
                 {/* type is an HTML attribute! */}
-                <Button variation="secondary" type="reset">
+                <Button variation="secondary" type="reset" onClick={() => onCloseModal?.()}>
                     Cancel
                 </Button>
                 <Button disabled={isWorking}>{isEditSession ? 'Edit Cabin' : 'Create new Cabin'}</Button>
