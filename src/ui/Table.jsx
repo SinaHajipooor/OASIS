@@ -1,3 +1,4 @@
+import { createContext, useContext } from "react";
 import styled from "styled-components";
 
 const StyledTable = styled.div`
@@ -60,4 +61,39 @@ const Empty = styled.p`
 `;
 
 
-export default function Table() { }
+
+// table context 
+const TableContext = createContext();
+
+
+
+export default function Table({ columns, children }) {
+    return <TableContext.Provider value={{ columns }}>
+        <StyledTable role="table">
+            {children}
+        </StyledTable>
+    </TableContext.Provider>
+}
+
+function Header({ children }) {
+    const { columns } = useContext(TableContext);
+    return <StyledHeader role='row' columns={columns} as='header'>
+        {children}
+    </StyledHeader>
+}
+
+function Row({ children }) {
+    const { columns } = useContext(TableContext);
+    return <StyledRow role="row" columns={columns}>
+        {children}
+    </StyledRow>
+}
+
+function Body({ }) { }
+
+
+Table.Header = Header;
+Table.Body = Body;
+Table.Row = Row;
+// we can pass the styled component that we have created for footer here also 
+Table.Footer = Footer;
