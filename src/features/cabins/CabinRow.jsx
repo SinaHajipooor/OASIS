@@ -54,7 +54,7 @@ function CabinRow({ cabin }) {
     // delete hook 
     const { isDeleting, deleteCabin } = useDeleteCabin()
     // duplicate 
-    const { isCreating, createCabin } = useCreateCabin();
+    const { createCabin } = useCreateCabin();
     // duplicate 
     function handleDuplicate() {
         createCabin({ name: `Copy of ${name}`, maxCapacity, regularPrice, discount, image, description })
