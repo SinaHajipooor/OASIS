@@ -1,4 +1,4 @@
-import { cloneElement, createContext, useContext, useState } from "react";
+import { cloneElement, createContext, useContext, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { HiXMark } from "react-icons/hi2";
 import styled from "styled-components";
@@ -77,11 +77,24 @@ function Open({ children, opens: opensWindowName }) {
 function Window({ children, name, }) {
     // states
     const { openName, close } = useContext(ModalContext);
+    // to select the modal
+    const ref = useRef()
+    // close the modal when ever the user click on out of modal 
+    useEffect(function () {
+        function handleClick(e) {
+            // to define if the user has clicked out of the modal or inside the modal (we want to close the modal if the user has clicked out side of the modal)
+            if (ref.current && !ref.current.contains(e.target)) close();
+        }
+        document.addEventListener('click', handleClick, true);
+
+        // clean up
+        return () => document.removeEventListener('click', handleClick, true);
+    }, [close])
     if (name !== openName) return null;
     // ui
     return createPortal(
         <Overlay>
-            <StyledModal>
+            <StyledModal ref={ref}>
                 <Button onClick={close}>
                     <HiXMark />
                 </Button>
