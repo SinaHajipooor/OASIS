@@ -86,7 +86,7 @@ function Window({ children, name, }) {
                     <HiXMark />
                 </Button>
                 <div>
-                    {children}
+                    {cloneElement(children, { onCloseModal: close })}
                 </div>
             </StyledModal>
         </Overlay>,
