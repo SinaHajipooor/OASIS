@@ -1,8 +1,8 @@
+import Select from "./Select"
+
 function SortBy({ options }) {
     return (
-        <div>
-            Sort
-        </div>
+        <Select options={options} type='white' />
     )
 }
 
