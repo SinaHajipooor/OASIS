@@ -3,6 +3,7 @@ import CabinRow from "./CabinRow";
 import { useCabins } from "./useCabins";
 import Table from "../../ui/Table";
 import Menus from '../../ui/Menus';
+import { useSearchParams } from 'react-router-dom';
 
 
 
@@ -34,6 +35,14 @@ import Menus from '../../ui/Menus';
 function CabinTable() {
     // get the data by the sutom hook 
     const { isLoading, cabins } = useCabins()
+    const [searchParams] = useSearchParams()
+    // get the filter value from the url 
+    const filterValue = searchParams.get('discount') || 'all';
+    // helper variable to filter cabins
+    let filteredCabins;
+    if (filterValue === 'all') filteredCabins = cabins;
+    if (filterValue === 'no-discount') filteredCabins = cabins.filter(cabin => cabin.discount === 0);
+    if (filterValue === 'with-discount') filteredCabins = cabins.filter(cabin => cabin.discount > 0);
     // ui
     if (isLoading) return <Spinner />
     return (
@@ -47,7 +56,7 @@ function CabinTable() {
                     <div>discount </div>
                     <div></div>
                 </Table.Header>
-                <Table.Body data={cabins} render={cabin => <CabinRow cabin={cabin} key={cabin.id} />} />
+                <Table.Body data={filteredCabins} render={cabin => <CabinRow cabin={cabin} key={cabin.id} />} />
             </Table>
         </Menus>
     )
