@@ -15,8 +15,8 @@ const FilterButton = styled.button`
   border: none;
 
   ${(props) =>
-    props.active &&
-    css`
+        props.active &&
+        css`
       background-color: var(--color-brand-600);
       color: var(--color-brand-50);
     `}
@@ -33,3 +33,21 @@ const FilterButton = styled.button`
     color: var(--color-brand-50);
   }
 `;
+
+
+function Filter() {
+    return (
+        <StyledFilter></StyledFilter>
+    )
+}
+
+export default Filter
+
+
+
+
+
+
+
+
+
