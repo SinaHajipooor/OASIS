@@ -53,56 +53,48 @@ const Button = styled.button`
   }
 `;
 
-// context
 const ModalContext = createContext();
 
-// parent 
 function Modal({ children }) {
-    // states
-    const [openName, setOpenName] = useState('');
-    // handlers
-    const close = () => setOpenName('');
-    const open = setOpenName;
+  const [openName, setOpenName] = useState("");
 
-    return <ModalContext.Provider value={{ openName, close, open }}>{children}</ModalContext.Provider>
+  const close = () => setOpenName("");
+  const open = setOpenName;
+
+  return (
+    <ModalContext.Provider value={{ openName, close, open }}>
+      {children}
+    </ModalContext.Provider>
+  );
 }
-
 
 function Open({ children, opens: opensWindowName }) {
-    const { open } = useContext(ModalContext);
+  const { open } = useContext(ModalContext);
 
-    return cloneElement(children, { onClick: () => open(opensWindowName) });
+  return cloneElement(children, { onClick: () => open(opensWindowName) });
 }
 
+function Window({ children, name }) {
+  const { openName, close } = useContext(ModalContext);
+  const ref = useOutsideClick(close);
 
-function Window({ children, name, }) {
-    // states
-    const { openName, close } = useContext(ModalContext);
-    // call the customn hook to find out if the user has clicked out side of the modal or not (this custom hook return the ref of that element that we want to listen for the event on that )
-    const ref = useOutsideClick(close)
-    if (name !== openName) return null;
-    // ui
-    return createPortal(
-        <Overlay>
-            <StyledModal ref={ref}>
-                <Button onClick={close}>
-                    <HiXMark />
-                </Button>
-                <div>
-                    {cloneElement(children, { onCloseModal: close })}
-                </div>
-            </StyledModal>
-        </Overlay>,
-        document.body
-    )
+  if (name !== openName) return null;
+
+  return createPortal(
+    <Overlay>
+      <StyledModal ref={ref}>
+        <Button onClick={close}>
+          <HiXMark />
+        </Button>
+
+        <div>{cloneElement(children, { onCloseModal: close })}</div>
+      </StyledModal>
+    </Overlay>,
+    document.body
+  );
 }
 
-
-// place the peoperties on the modal
 Modal.Open = Open;
 Modal.Window = Window;
 
-
-
-export default Modal
-
+export default Modal;

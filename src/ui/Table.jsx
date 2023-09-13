@@ -60,47 +60,42 @@ const Empty = styled.p`
   margin: 2.4rem;
 `;
 
-
-
-// table context 
 const TableContext = createContext();
 
-
-
-export default function Table({ columns, children }) {
-    return <TableContext.Provider value={{ columns }}>
-        <StyledTable role="table">
-            {children}
-        </StyledTable>
+function Table({ columns, children }) {
+  return (
+    <TableContext.Provider value={{ columns }}>
+      <StyledTable role="table">{children}</StyledTable>
     </TableContext.Provider>
+  );
 }
 
 function Header({ children }) {
-    const { columns } = useContext(TableContext);
-    return <StyledHeader role='row' columns={columns} as='header'>
-        {children}
+  const { columns } = useContext(TableContext);
+  return (
+    <StyledHeader role="row" columns={columns} as="header">
+      {children}
     </StyledHeader>
+  );
 }
-
 function Row({ children }) {
-    const { columns } = useContext(TableContext);
-    return <StyledRow role="row" columns={columns}>
-        {children}
+  const { columns } = useContext(TableContext);
+  return (
+    <StyledRow role="row" columns={columns}>
+      {children}
     </StyledRow>
+  );
 }
 
 function Body({ data, render }) {
-    // to findout if there is any data or not 
-    if (data.length === 0) return <Empty>No data to show at the moment</Empty>
+  if (!data.length) return <Empty>No data to show at the moment</Empty>;
 
-    return <StyledBody>
-        {data.map(render)}
-    </StyledBody>
+  return <StyledBody>{data.map(render)}</StyledBody>;
 }
-
 
 Table.Header = Header;
 Table.Body = Body;
 Table.Row = Row;
-// we can pass the styled component that we have created for footer here also 
 Table.Footer = Footer;
+
+export default Table;

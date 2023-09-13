@@ -1,6 +1,5 @@
 import styled from "styled-components";
 
-
 const StyledFormRow = styled.div`
   display: grid;
   align-items: center;
@@ -37,17 +36,14 @@ const Error = styled.span`
   color: var(--color-red-700);
 `;
 
-
-function FormRow({ lable, error, children, }) {
-    return (
-        <StyledFormRow>
-            {/* the value of the htmlFor is the id of the children  */}
-            {lable && <Label htmlFor={children.props.id}>{lable}</Label>}
-            {children}
-            {/* display the error component if this field has any error in our form  */}
-            {error && <Error>{error}</Error>}
-        </StyledFormRow>
-    )
+function FormRow({ label, error, children }) {
+  return (
+    <StyledFormRow>
+      {label && <Label htmlFor={children.props.id}>{label}</Label>}
+      {children}
+      {error && <Error>{error}</Error>}
+    </StyledFormRow>
+  );
 }
 
-export default FormRow
+export default FormRow;
